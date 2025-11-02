@@ -1,10 +1,10 @@
 name: Shein Product Monitor
 
 on:
-  schedule:
-    # Run every minute
-    - cron: '* * * * *'
-  workflow_dispatch:  # Allow manual trigger
+  # schedule:
+  #   # Run every 5 minutes (disabled due to bot protection)
+  #   - cron: '*/5 * * * *'
+  workflow_dispatch:  # Manual trigger only
 
 permissions:
   contents: write
