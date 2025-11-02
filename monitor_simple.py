@@ -4,7 +4,7 @@ Shein Product Count Monitor with WhatsApp Alerts (No Selenium)
 Monitors product counts on Shein category page and sends alerts via Twilio WhatsApp
 """
 
-import requests
+import cloudscraper
 from bs4 import BeautifulSoup
 import json
 import time
@@ -30,19 +30,14 @@ class SheinMonitor:
         self.twilio_from = self.config['twilio_whatsapp_from']
         self.twilio_to = self.config['twilio_whatsapp_to']
         
-        # Request headers to mimic a browser
-        self.headers = {
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language': 'en-US,en;q=0.5',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'Connection': 'keep-alive',
-            'Upgrade-Insecure-Requests': '1',
-            'Sec-Fetch-Dest': 'document',
-            'Sec-Fetch-Mode': 'navigate',
-            'Sec-Fetch-Site': 'none',
-            'Cache-Control': 'max-age=0',
-        }
+        # Initialize cloudscraper (bypasses Cloudflare and bot detection)
+        self.scraper = cloudscraper.create_scraper(
+            browser={
+                'browser': 'chrome',
+                'platform': 'windows',
+                'mobile': False
+            }
+        )
     
     def load_config(self, config_path):
         """Load configuration from JSON file or environment variables"""
@@ -78,9 +73,9 @@ class SheinMonitor:
             json.dump(data, f, indent=2)
     
     def fetch_page(self):
-        """Fetch the Shein category page using requests"""
+        """Fetch the Shein category page using cloudscraper"""
         try:
-            response = requests.get(self.url, headers=self.headers, timeout=30)
+            response = self.scraper.get(self.url, timeout=30)
             response.raise_for_status()
             return response.text
         except Exception as e:
