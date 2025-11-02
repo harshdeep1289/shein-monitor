@@ -1,0 +1,50 @@
+name: Shein Product Monitor
+
+on:
+  schedule:
+    # Run every minute
+    - cron: '* * * * *'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        
+    - name: Install Chrome and ChromeDriver
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y chromium-browser chromium-chromedriver
+        
+    - name: Run monitor (single check)
+      env:
+        TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+        TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+        TWILIO_WHATSAPP_FROM: ${{ secrets.TWILIO_WHATSAPP_FROM }}
+        TWILIO_WHATSAPP_TO: ${{ secrets.TWILIO_WHATSAPP_TO }}
+      run: python monitor_single.py
+      
+    - name: Commit updated counts
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add product_counts.json
+        git diff --quiet && git diff --staged --quiet || git commit -m "Update product counts [skip ci]"
+        
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ github.ref }}

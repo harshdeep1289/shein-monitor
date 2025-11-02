@@ -1,0 +1,9 @@
+{
+  "url": "https://www.sheinindia.in/c/sverse-5939-37961",
+  "check_interval_seconds": 300,
+  "storage_path": "product_counts.json",
+  "twilio_account_sid": "YOUR_TWILIO_ACCOUNT_SID",
+  "twilio_auth_token": "YOUR_TWILIO_AUTH_TOKEN",
+  "twilio_whatsapp_from": "whatsapp:+14155238886",
+  "twilio_whatsapp_to": "whatsapp:+1234567890"
+}

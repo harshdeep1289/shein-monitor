@@ -1,0 +1,18 @@
+# Configuration with credentials
+config.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Logs
+*.log
+
+# macOS
+.DS_Store
